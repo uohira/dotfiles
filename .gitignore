@@ -1,0 +1,7 @@
+.vim/.netrwhist
+.vim/view/
+.vim/cache/
+.vim/autoload/
+.vim/plugged/
+*.swp
+tags

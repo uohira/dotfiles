@@ -1,0 +1,1 @@
+/home/yuno/dotfiles/.vim

@@ -1,0 +1,615 @@
+call plug#begin('~/.vim/plugged')
+  Plug 'Shougo/unite.vim'
+  Plug 'Shougo/neocomplete'
+  Plug 'Shougo/neosnippet.vim'
+  Plug 'Shougo/neosnippet-snippets'
+
+  Plug 'scrooloose/nerdtree'
+  Plug 'jistr/vim-nerdtree-tabs'
+  Plug 'majutsushi/tagbar'
+  Plug 'wesleyche/SrcExpl'
+  Plug 'bling/vim-airline'
+  Plug 'tpope/vim-fugitive'
+  Plug 'thinca/vim-quickrun'
+  Plug 'AndrewRadev/linediff.vim'
+  Plug 'LeafCage/yankround.vim'
+  Plug 'osyo-manga/vim-over'
+  Plug 'h1mesuke/vim-alignta'
+  Plug 't9md/vim-quickhl'
+  Plug 'osyo-manga/vim-anzu'
+  Plug 'tpope/vim-surround'
+  Plug 'nathanaelkane/vim-indent-guides'
+  Plug 'tomtom/tcomment_vim'
+  Plug 'kannokanno/previm'
+  Plug 'tyru/open-browser.vim'
+  Plug 'haya14busa/incsearch.vim'
+  Plug 't9md/vim-smalls'
+  Plug 'bling/vim-bufferline'
+  Plug 'mbbill/undotree'
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'tomasr/molokai'
+  Plug 'bronson/vim-trailing-whitespace'
+  Plug 'godlygeek/csapprox'
+
+  Plug 'scrooloose/syntastic'
+
+  " lang
+
+  Plug 'mattn/emmet-vim', { 'for':
+        \ ['html', 'eruby', 'javascript.jsx', 'scss', 'css']
+        \}
+  Plug 'slim-template/vim-slim', { 'for': ['slim'] }
+  Plug 'elixir-lang/vim-elixir', { 'for': ['elixir'] }
+  Plug 'lambdatoast/elm.vim', { 'for': ['elm'] }
+
+  Plug 'leshill/vim-json', { 'for': ['json'] }
+
+  Plug 'mtscout6/syntastic-local-eslint.vim', { 'for': ['javascript.jsx'] }
+  Plug 'pangloss/vim-javascript', { 'for': ['javascript.jsx'] }
+  Plug 'mxw/vim-jsx', { 'for': ['javascript.jsx'] }
+  Plug 'ternjs/tern_for_vim', {
+        \   'for': 'javascript.jsx'
+        \ , 'dir': '~/.vim/plugged/tern_for_vim'
+        \ , 'do': 'npm install'
+        \ }
+  Plug 'flowtype/vim-flow', {
+        \   'for': 'javascript.jsx'
+        \ , 'do': 'npm install -g flow-bin'
+        \ }
+  Plug 'leafgarland/typescript-vim', { 'for': ['ts', 'tsx'] }
+  Plug 'heavenshell/vim-tslint', { 'for': ['ts', 'tsx'] }
+  Plug 'alessioalex/syntastic-local-tslint.vim', { 'for': ['ts', 'tsx'] }
+  Plug 'digitaltoad/vim-pug', { 'for': ['pug'] }
+
+  Plug 'fatih/vim-go', { 'for': ['go'] }
+  Plug 'vim-jp/vim-go-extra', { 'for': ['go'] }
+
+  Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
+
+call plug#end()
+
+
+
+"############################################ {{{
+" Unite
+"############################################
+if (index(g:plugs_order, 'unite.vim') >= 0)
+  let g:unite_enable_start_insert = 1
+  let g:unite_enable_auto_select = 0
+
+  nnoremap <Leader>ub :<C-u>Unite buffer<CR>
+  nnoremap <Leader>uf :<C-u>Unite -buffer-name=file file<CR>
+  nnoremap <Leader>uh :<C-u>Unite file_mru<CR>
+  nnoremap <Leader>ud :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
+  nnoremap <Leader>ur :<C-u>Unite -buffer-name=register register<CR>
+  nnoremap <Leader>ug :<C-u>Unite grep:.<CR>
+  nnoremap <Leader>um :<C-u>Unite file_mru<CR>
+
+  augroup vim_unite_keymap
+    autocmd!
+    au FileType unite nnoremap <silent><buffer><C-n> j
+    au FileType unite nnoremap <silent><buffer><C-p> k
+    au FileType unite inoremap <silent><buffer><C-n> <ESC>j
+    au FileType unite inoremap <silent><buffer><C-p> <ESC>k
+    au FileType unite nnoremap <silent><buffer><expr> v unite#do_action('vsplit')
+    au FileType unite nnoremap <silent><buffer><expr> s unite#do_action('split')
+    au FileType unite nnoremap <silent><buffer><expr> t unite#do_action('tabopen')
+    au FileType unite nnoremap <silent><buffer><ESC><ESC> :<C-u>bdelete<CR>
+    au FileType unite inoremap <silent><buffer><ESC><ESC> <ESC>:<C-u>bdelete<CR>
+    au FileType unite nnoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
+    au FileType unite inoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
+  augroup END
+endif
+"}}}
+
+
+"############################################ {{{
+" neocomplete
+"############################################
+if (index(g:plugs_order, 'neocomplete') >= 0)
+  " use neocomplete
+  let g:neocomplete#enable_at_startup = 1
+  " ignore case
+  let g:neocomplete#enable_smart_case = 1
+  " camel case completion
+  let g:neocomplete#enable_camel_case_completion  =  1
+
+  let g:neocomplete#max_list = 20
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
+  let g:neocomplete#auto_completion_start_length = 0
+
+  let g:neocomplete#enable_auto_close_preview = 0
+  au InsertLeave * silent! pclose!
+
+  let g:neocomplete#max_keyword_width = 80
+
+  if !exists('g:neocomplete#delimiter_patterns')
+    let g:neocomplete#delimiter_patterns = {}
+  endif
+  let g:neocomplete#delimiter_patterns.ruby = ['::']
+  let g:neocomplete#delimiter_patterns.javascript = ['.']
+
+  if !exists('g:neocomplete#same_filetypes')
+    let g:neocomplete#same_filetypes = {}
+  endif
+  let g:neocomplete#same_filetypes.ruby = 'eruby'
+  let g:neocomplete#same_filetypes.javascript = 'javascript.jsx'
+
+
+  if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+  endif
+
+  let g:neocomplete#force_omni_input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#force_omni_input_patterns.go = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+
+  let g:neocomplete#data_directory = $HOME . '/.vim/cache/neocomplete'
+
+  call neocomplete#custom#source('look', 'min_pattern_length', 1)
+
+  " keymap
+  inoremap <expr><C-u>   neocomplete#undo_completion()
+  inoremap <expr><TAB>   pumvisible() ? "\<C-n>" : "\<TAB>"
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
+  inoremap <expr><C-h>   pumvisible() ? neocomplete#smart_close_popup() : "\<C-h>"
+  inoremap <expr><BS>    pumvisible() ? neocomplete#smart_close_popup() : "\<BS>"
+  inoremap <expr><C-y>   pumvisible() ? neocomplete#close_popup() : "\<C-y>"
+  inoremap <expr><C-c>   pumvisible() ? neocomplete#cancel_popup() : "\<C-c>"
+  inoremap <expr><ESC>   pumvisible() ? neocomplete#cancel_popup() : "\<ESC>"
+  " inoremap <expr><C-n>   !pumvisible() ? neocomplete#start_manual_complete() : "\<C-n>"
+  inoremap <expr><Space> pumvisible() ? neocomplete#smart_close_popup() : "\<Space>"
+
+
+  " Enable heavy omni completion.
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+  let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
+  let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+  let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+  let g:neocomplete#sources#omni#input_patterns.go = '\h\w\.\w*'
+endif
+"}}}
+
+
+"############################################ {{{
+" Neosnippet
+"############################################
+if (index(g:plugs_order, 'neosnippet.vim') >= 0)
+  let g:neosnippet#snippets_directory = []
+  let g:neosnippet#snippets_directory += ['~/.vim/plugged/neosnippet-snippets/neosnippets']
+  let g:neosnippet#snippets_directory += ['~/.vim/snippets/']
+
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+
+  imap <expr><TAB> neosnippet#jumpable() ? "<Plug>(neosnippet_jump)"
+        \ : neosnippet#expandable() ? "<Plug>(neosnippet_expand)" : "\<TAB>"
+  smap <expr><TAB> neosnippet#jumpable() ? "<Plug>(neosnippet_jump)"
+        \ : neosnippet#expandable() ? "<Plug>(neosnippet_expand)" : "\<TAB>"
+
+  " For snippet_complete marker.
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+endif
+"}}}
+
+
+"############################################ {{{
+" NERDTree
+"############################################
+if (index(g:plugs_order, 'nerdtree') >= 0)
+  " nnoremap <silent> <Leader>n :NERDTreeFocus<CR>
+  nnoremap <silent> <Leader>N :NERDTreeFind<CR>
+  let g:NERDTreeMapOpenSplit = 's'
+  let g:NERDTreeMapOpenVSplit = 'v'
+  let NERDTreeShowHidden = 1
+
+  command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>')
+  function! s:ChangeCurrentDir(directory, bang)
+    if a:directory == ''
+      lcd %:p:h
+    else
+      execute 'lcd' . a:directory
+    endif
+
+    if a:bang == ''
+      pwd
+    endif
+  endfunction
+endif
+"}}}
+
+
+"############################################ {{{
+" vim NERDTree tabs
+"############################################
+if (index(g:plugs_order, 'vim-nerdtree-tabs') >= 0)
+  let g:nerdtree_tabs_smart_startup_focus = 1
+  let g:nerdtree_tabs_synchronize_focus = 1
+  map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
+endif
+"}}}
+
+
+"############################################ {{{
+" tagbar
+"############################################
+if (index(g:plugs_order, 'vim-plug') >= 0)
+  " Width (default 40)
+  let g:tagbar_width = 40
+  " Map for toggle
+  nnoremap <silent> <leader>T :<C-u>TagbarToggle<CR>
+endif
+"}}}
+
+
+"############################################ {{{
+" SrcExpl
+"############################################
+if (index(g:plugs_order, 'SrcExpl') >= 0)
+  " Set refresh time in ms
+  let g:SrcExpl_RefreshTime = 1000
+  " Is update tags when SrcExpl is opened
+  let g:SrcExpl_isUpdateTags = 0
+  " Tag update command
+  let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
+  " Update all tags
+  function! g:SrcExpl_UpdateAllTags()
+    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase -R .'
+    call g:SrcExpl_UpdateTags()
+    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
+  endfunction
+  " Source Explorer Window Height
+  let g:SrcExpl_winHeight = 8
+  " Mappings
+  nnoremap [srce] <Nop>
+  nmap <Leader>s [srce]
+  nnoremap <silent> [srce]  :<C-u>SrcExplToggle<CR>
+  nnoremap <silent> [srce]u :<C-u>call g:SrcExpl_UpdateTags()<CR>
+  nnoremap <silent> [srce]a :<C-u>call g:SrcExpl_UpdateAllTags()<CR>
+  nnoremap <silent> [srce]n :<C-u>call g:SrcExpl_NextDef()<CR>
+  nnoremap <silent> [srce]p :<C-u>call g:SrcExpl_PrevDef()<CR>
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-airline
+"############################################
+if (index(g:plugs_order, 'vim-airline') >= 0)
+  let g:airline#extensions#whitespace#enabled = 1
+  let g:airline_inactive_collapse = 0
+  let g:airline#extensions#branch#enabled = 1
+  let g:airline#extensions#branch#empty_message = ''
+  let g:airline#extensions#branch#format = 1
+  let g:airline#extensions#bufferline#enabled = 1
+  let g:airline#extensions#bufferline#overwrite_variables = 1
+  let g:airline#extensions#syntastic#enabled = 1
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#tabline#show_buffers = 0
+  let g:airline#extensions#tagbar#enabled = 1
+  let g:airline_left_sep=''
+  let g:airline_right_sep=''
+  let g:airline_theme = 'dark'
+endif
+"}}}
+
+
+"############################################ {{{
+" QuickRun
+"############################################
+if (index(g:plugs_order, 'vim-quickrun') >= 0)
+  let g:quickrun_config = {
+        \   "_" : {
+        \       "hook/time/enable" : 1,
+        \       'split': 'vertical'
+        \   },
+        \}
+  let g:quickrun_config._ = {
+        \ 'runner'                          : 'vimproc',
+        \ 'runner/vimproc/updatetime'       : 60,
+        \ 'outputter'                       : 'error',
+        \ 'outputter/error/success'         : 'buffer',
+        \ 'outputter/error/error'           : 'quickfix',
+        \ 'outputter/buffer/split'          : ':rightbelow 8sp',
+        \ 'outputter/buffer/close_on_empty' : 1,
+        \ }
+endif
+"}}}
+
+
+"############################################ {{{
+" yankround
+"############################################
+if (index(g:plugs_order, 'yankround.vim') >= 0)
+  nmap p <Plug>(yankround-p)
+  xmap p <Plug>(yankround-p)
+  nmap P <Plug>(yankround-P)
+  nmap gp <Plug>(yankround-gp)
+  xmap gp <Plug>(yankround-gp)
+  nmap gP <Plug>(yankround-gP)
+  nmap <C-p> <Plug>(yankround-prev)
+  nmap <C-n> <Plug>(yankround-next)
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-quickhl
+"############################################
+if (index(g:plugs_order, 'vim-quickhl') >= 0)
+  " 固定ハイライト
+  nmap <Leader>m <Plug>(quickhl-manual-this)
+  xmap <Leader>m <Plug>(quickhl-manual-this)
+  " 一括解除
+  nmap <Leader>M <Plug>(quickhl-manual-reset)
+  xmap <Leader>M <Plug>(quickhl-manual-reset)
+  " カーソル下の単語をハイライト。非固定
+  nmap <Leader>j <Plug>(quickhl-cword-toggle)
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-anzu
+"############################################
+if (index(g:plugs_order, 'vim-anzu') >= 0)
+  nmap n nzz<Plug>(anzu-update-search-status)
+  nmap N Nzz<Plug>(anzu-update-search-status)
+  nmap * <Plug>(anzu-star)
+  nmap # <Plug>(anzu-sharp)
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-indent-guides
+"############################################
+if (index(g:plugs_order, 'vim-indent-guides') >= 0)
+  let g:indent_guides_enable_on_vim_startup = 1
+  let g:indent_guides_start_level = 1
+  let g:indent_guides_guide_size = &tabstop
+  let g:indent_guides_auto_colors = 0
+  augroup vim_indent_colors
+    autocmd!
+    autocmd VimEnter,Colorscheme * :hi SpecialKey term=bold ctermfg=9
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#414141 ctermfg=239 ctermbg=236
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#585858 ctermfg=236 ctermbg=239
+  augroup END
+endif
+"}}}
+
+
+"############################################ {{{
+" tcomment_vim
+"############################################
+if (index(g:plugs_order, 'tcomment_vim') >= 0)
+  if !exists('g:tcomment_types')
+    let g:tcomment_types = {}
+  endif
+endif
+"}}}
+
+
+"############################################ {{{
+" tyru/open-browser.vim
+"############################################
+if (index(g:plugs_order, 'open-browser.vim') >= 0)
+  vmap go <Plug>(openbrowser-smart-search)
+endif
+"}}}
+
+
+"############################################ {{{
+" incsearch.vim
+"############################################
+if (index(g:plugs_order, 'incsearch.vim') >= 0)
+  map /  <Plug>(incsearch-forward)
+  map ?  <Plug>(incsearch-backward)
+  map g/ <Plug>(incsearch-stay)
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-smalls
+"############################################
+if (index(g:plugs_order, 'vim-smalls') >= 0)
+  nmap <Leader>f <Plug>(smalls)
+  omap <Leader>f <Plug>(smalls)
+  xmap <Leader>f <Plug>(smalls)
+endif
+"}}}
+
+
+"############################################ {{{
+" undotree
+"############################################
+if (index(g:plugs_order, 'undotree') >= 0)
+  nmap <Leader>U :UndotreeToggle<CR>
+  let g:undotree_SetFocusWhenToggle = 1
+  let g:undotree_WindowLayout = 'topright'
+  let g:undotree_SplitWidth = 35
+  let g:undotree_diffAutoOpen = 1
+  let g:undotree_diffpanelHeight = 25
+  let g:undotree_RelativeTimestamp = 1
+  let g:undotree_TreeNodeShape = '*'
+  let g:undotree_HighlightChangedText = 1
+  let g:undotree_HighlightSyntax = "UnderLined"
+endif
+"}}}
+
+
+"############################################ {{{
+" molokai
+"############################################
+if (index(g:plugs_order, 'molokai') >= 0)
+  colorscheme molokai
+  let g:molokai_original = 1
+  let g:rehash256 = 1
+endif
+"}}}
+
+
+"############################################ {{{
+" syntastic
+"############################################
+if (index(g:plugs_order, 'syntastic') >= 0)
+  " let g:syntastic_enable_signs = 1
+  let g:syntastic_mode_map = {'mode': 'passive', 'active_filetypes': []}
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
+
+  let g:syntastic_aggregate_errors = 1
+  let g:syntastic_enable_signs = 1
+  let g:syntastic_always_populate_loc_list = 0
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 0
+  let g:syntastic_check_on_wq = 0
+
+  let g:syntastic_go_checkers = ['go', 'golint']
+  let g:syntastic_javascript_checkers = ['eslint']
+  let g:syntastic_typescript_checkers = ['tslint']
+  let g:syntastic_python_checkers = ['flake8']
+  let g:syntastic_ruby_checkers = ['rubocop', 'mri']
+
+  nnoremap ,e :<C-u>SyntasticCheck<CR>
+  nnoremap ,E :<C-u>SyntasticToggleMode<CR>
+endif
+"}}}
+
+
+"############################################ {{{
+" emmet-vim
+"############################################
+if (index(g:plugs_order, 'emmet-vim') >= 0)
+  let g:user_emmet_leader_key = '<c-y>'
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-bufferline
+"############################################
+if (index(g:plugs_order, 'vim-bufferline') >= 0)
+  let g:bufferline_modified = '[+]'
+  let g:bufferline_echo = 0
+  let g:bufferline_rotate = 1
+  let g:bufferline_fixed_index = -2
+  let g:bufferline_show_bufnr = 0
+  " let g:bufferline_active_buffer_left = '['
+  " let g:bufferline_active_buffer_right = ']'
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-jsx
+"############################################
+if (index(g:plugs_order, 'vim-jsx') >= 0)
+  let g:jsx_ext_required = 0
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-javascript
+"############################################
+if (index(g:plugs_order, 'vim-javascript') >= 0)
+  let g:javascript_plugin_jsdoc = 1
+endif
+"}}}
+
+
+"############################################ {{{
+" tern_for_vim
+"############################################
+if (index(g:plugs_order, 'tern_for_vim') >= 0)
+  augroup vim_tern_keymap
+    autocmd!
+    autocmd FileType javascript.jsx nmap <Leader>ldf :<C-u>TernDefPreview<CR>
+    autocmd FileType javascript.jsx nmap <Leader>ldc :<C-u>TernDoc<CR>
+    autocmd FileType javascript.jsx nmap <Leader>lt  :<C-u>TernType<CR>
+    autocmd FileType javascript.jsx nmap <Leader>lrf :<C-u>TernRefs<CR>
+    autocmd FileType javascript.jsx nmap <Leader>lre :<C-u>TernRename<CR>
+  augroup END
+
+  let g:tern_show_argument_hints = 'on_hold'
+  " let g:tern_show_signature_in_pum = 1
+
+endif
+"}}}
+
+"############################################ {{{
+" vim-flow
+"############################################
+if (index(g:plugs_order, 'vim-flow') >= 0)
+  let g:flow#omnifunc = 0
+  let g:flow#timeout = 4
+  let g:flow#showquickfix = 0
+endif
+"}}}
+
+"############################################ {{{
+" vim-go
+"############################################
+if (index(g:plugs_order, 'vim-go') >= 0)
+  augroup vim_golang_keymap
+    autocmd!
+    autocmd FileType go nmap <buffer><Leader>ds <Plug>(go-def-split)
+    autocmd FileType go nmap <buffer><Leader>dt <Plug>(go-def-tab)
+    autocmd FileType go nmap <buffer><Leader>gd <Plug>(go-doc)
+    autocmd FileType go nmap <buffer><Leader>gb <Plug>(go-doc-browser)
+    autocmd FileType go nmap <buffer><Leader>gt <Plug>(go-test)
+    autocmd FileType go nmap <buffer><Leader>gr <Plug>(go-run)
+    autocmd FileType go nmap <buffer><Leader>s <Plug>(go-implements)
+    autocmd FileType go nmap <buffer><Leader>i <Plug>(go-info)
+    autocmd FileType go nmap <buffer><Leader>e <Plug>(go-rename)
+  augroup END
+  let g:go_highlight_functions = 1
+  let g:go_highlight_methods = 1
+  let g:go_highlight_structs = 1
+  let g:go_highlight_operators = 1
+  let g:go_highlight_build_constraints = 1
+
+  let g:go_fmt_autosave = 1
+  let g:go_fmt_command = "gofmt"
+
+  let g:go_fmt_fail_silently = 1
+endif
+"}}}
+
+
+"############################################ {{{
+" jedi-vim
+"############################################
+if (index(g:plugs_order, 'jedi-vim') >= 0)
+  let g:jedi#auto_initialization = 1
+  let g:jedi#completions_enabled = 1
+  let g:jedi#auto_vim_configuration = 1
+
+  let g:jedi#completions_command = "<C-n>"
+  let g:jedi#goto_assignments_command = "<Leader>ldv"
+  let g:jedi#goto_definitions_command = "<Leader>ldf"
+  " let g:jedi#documentation_command = "<Leader>ldc"
+  let g:jedi#rename_command = "<Leader>lr"
+  let g:jedi#usages_command = "<Leader>lu"
+  let g:jedi#popup_select_first = 0
+  let g:jedi#popup_on_dot = 1
+
+  augroup vim_jedi_keymap
+    autocmd!
+    autocmd FileType python setlocal completeopt-=preview
+    " for w/ neocomplete
+    autocmd FileType python setlocal omnifunc=jedi#completions
+  augroup End
+
+  let g:neocomplete#force_omni_input_patterns.python =
+        \'\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+endif
+"}}}

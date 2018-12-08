@@ -1,0 +1,55 @@
+[user]
+  email = uks6fe4r@gmail.com
+  name = uohira
+[include]
+  path = ~/.gitconfig.local
+[core]
+  excludesfile = ~/.gitignore
+  pager = less -r
+  editor = vim -c \"set fenc=utf-8\"
+[color]
+  ui = auto
+[push]
+  default = current
+[branch]
+  autosetuprebase = always
+[merge]
+  ff = false
+	tool = vimdiff
+[pull]
+  rebase = true
+[alias]
+  # http://oli.jp/2012/git-powerup/
+  # http://blog.blindgaenger.net/advanced_git_aliases.html
+  alias = !git config --list | grep 'alias\\.' | sed 's/alias\\.\\([^=]*\\)=\\(.*\\)/\\1\\\t => \\2/' | sort
+  b = branch -a
+  br = browse-remote
+  ci = commit
+  co = checkout
+  d = diff
+  dh = diff HEAD^
+  dhh = diff HEAD^^^
+  dt = difftool
+  dth = difftool HEAD^
+  dthh = difftool HEAD^^^
+  dc = diff --cached
+  f = fetch --prune
+  fs = !git f && git su
+  ignore = !([ ! -e .gitignore ] && touch .gitignore) | echo $1 >> .gitignore
+  info = remote show origin
+  l = log --graph --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(green)- %an, %cr%Creset'
+  l1 = !git --no-pager log -n 20 --oneline --decorate --no-merges --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(green)- %an, %cr%Creset'
+  ll = log --stat --abbrev-commit
+  ln = log --graph --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(green)- %an, %cr%Creset' --name-status
+  lp = log --oneline -p -n 1
+  ls = log --stat --abbrev-commit
+  s = status --short --branch
+  st = status
+  sm = submodule status
+  smu = submodule update
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = false
+[mergetool]
+	prompt = false

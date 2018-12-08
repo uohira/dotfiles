@@ -1,0 +1,41 @@
+"-----------------------------------------------------------------------
+" gVim
+"-----------------------------------------------------------------------
+
+" colorscheme
+try
+  colorscheme molokai
+catch
+  colorscheme desert
+endtry
+
+" window size
+set lines=40
+set columns=160
+
+" highlight trail
+augroup gvim_color
+  autocmd!
+  autocmd VimEnter,WinEnter,ColorScheme * highlight ColorColumn guibg=#333333
+  autocmd VimEnter,WinEnter,ColorScheme * highlight Visual guifg=khaki guibg=olivedrab
+augroup END
+
+" windows
+if has('multi_byte_ime') && has('win32') || has('win64')
+  source $HOME/.vim/vimrc.win
+endif
+
+" menu
+if has('gui_running')
+  set guioptions-=a
+  set guioptions-=m " remove menu
+  set guioptions-=T " remove toolbar
+  "set guicursor+=a:block-blinkon0 " use solid block cursor
+endif
+
+" local setting
+try
+  source $HOME/.gvimrc.local
+catch
+endtry
+

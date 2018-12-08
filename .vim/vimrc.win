@@ -1,0 +1,20 @@
+"-----------------------------------------------------------------------
+" Windows
+"-----------------------------------------------------------------------
+
+highlight WhitespaceEOL ctermbg=red guibg=red
+match WhitespaceEOL /Å@\|[ÇO-ÇXÇÅ-ÇöÇ`-Çy]\|\s\+$/
+autocmd WinEnter * match WhitespaceEOL /Å@\|[ÇO-ÇXÇÅ-ÇöÇ`-Çy]\|\s\+$/
+
+highlight CursorIM guifg=NONE guibg=Red
+set guifont=Migu_1M:h12:cSHIFTJIS
+
+if has('gui_running')
+    au VimEnter * set transparency=230
+endif
+
+if has('multi_byte_ime') || has('multi_byte')
+  autocmd VimEnter,WinEnter,ColorScheme * highlight CursorIM guifg=NONE guibg=Red
+  set iminsert=0
+  set imsearch=0
+endif

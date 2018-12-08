@@ -1,0 +1,518 @@
+"-----------------------------------------------------------------------
+" Vim
+"-----------------------------------------------------------------------
+
+set nocompatible
+set t_Co=256
+set t_ut=
+" Don't request terminal version string (for xterm)
+set t_RV=
+
+" OS
+let g:is_windows = has('win16') || has('win32') || has('win64')
+let s:is_cygwin  = has('win32unix')
+let s:is_mac     = has('mac') || has('macunix') || has('gui_macvim')
+let s:is_unix    = has('unix')
+" 標準メニューを読み込まない
+let g:did_install_default_menus = 1
+
+"map leader
+let mapleader = ","
+let g:mapleader = ","
+
+colorscheme desert
+
+"---------------------------------------------------------------------- {{{
+" bundle setting
+"----------------------------------------------------------------------
+if isdirectory(expand('~/.vim/plugged'))
+  source $HOME/.vim/vimrc.bundle
+endif
+
+filetype plugin indent on
+
+
+"----------------------------------------------------------------------
+" 基本設定
+"----------------------------------------------------------------------
+syntax on
+
+augroup vim_highlight_visual_mode
+  autocmd!
+  autocmd VimEnter,WinEnter,ColorScheme * highlight Visual term=reverse cterm=reverse
+augroup END
+
+if !g:is_windows
+  set encoding=utf-8
+  set fileformat=unix
+endif
+set fileencoding=utf-8
+set fileencodings=utf-8,iso-2022,euc-jp,cp932
+set ambiwidth=double
+set number
+
+"Exchange path separator
+if g:is_windows
+  set shellslash
+endif
+
+" タブ設定
+set expandtab
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+
+" 自動インデント
+set smartindent
+
+" 右端で折り返し
+set wrap
+
+" タブ文字，行末\sをハイライト
+set list
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+" 行末の自動改行OFF
+set textwidth=0
+set wrapmargin=0
+
+" クリップボード同期
+set clipboard=unnamed
+
+" 大文字、小文字関係なく検索
+set ignorecase
+" 大文字が含まれている場合、大文字小文字を区別
+set smartcase
+" インクリメンタルサーチ
+set incsearch
+" ハイライトサーチ
+set hlsearch
+
+set cursorline
+if g:colors_name == 'molokai'
+  augroup vim_cursor_line
+    autocmd!
+    autocmd VimEnter,WinEnter,ColorScheme * highlight CursorLine cterm=NONE
+  augroup END
+  set cursorcolumn
+else
+  augroup vim_cursor_line
+    autocmd!
+    autocmd VimEnter,ColorScheme * highlight CursorLine cterm=underline
+    autocmd InsertEnter * highlight CursorLine cterm=bold
+    autocmd InsertLeave * highlight CursorLine cterm=underline
+  augroup END
+  if has('gui_running')
+    set cursorcolumn
+  endif
+endif
+
+" vertical lines
+augroup vim_vertical_lines
+  autocmd!
+  autocmd VimEnter,WinEnter * highlight ColorColumn ctermbg=235
+augroup END
+set colorcolumn=80,120
+
+" 左右のカーソル移動で行間移動可能にする
+set whichwrap=b,s,h,l,<,>,[,]
+
+" バックスペース設定
+set backspace=indent,eol,start
+
+" 他所で変更があれば反映
+set autoread
+
+" When off a buffer is unloaded when it is abandoned.
+set hidden
+
+" コマンドを表示
+set showcmd
+
+" カーソル位置を表示
+set ruler
+
+" <C-a>, <C-x> インクリメント設定(数字)
+set nf=hex
+
+" 括弧の対応をハイライト
+set showmatch
+
+" 常にタブバーを表示
+set showtabline=2
+set laststatus=2
+
+" メッセージ欄を1行表示
+set cmdheight=1
+
+"" マウス設定有効化
+set mouse=a
+set ttymouse=xterm2
+
+" コマンドラインの補完を拡張モードで実行
+set wildmenu
+set wildchar=<TAB>
+set wildmode=list:longest,full
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
+
+" completion options
+" set completeopt=longest,menuone
+" set complete=.,w,b,u,t,i
+set complete=w,b,u,t,i
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+
+" 画面途中でのスクロール
+set scrolloff=3
+
+" コマンド履歴保存数
+set history=200
+
+" 画面分割を右，下に開く
+set splitright
+set splitbelow
+
+" Toggle paste option
+set pastetoggle=<F12>
+
+"-----------------------------------------------------------------------
+" ファイル生成関連
+"-----------------------------------------------------------------------
+if g:is_windows
+  if !isdirectory(expand('$VIM/vimbackup'))
+    call system("mkdir $VIM/vimbackup")
+  endif
+  "(info)vimと同ディレクトリに「vimbackup」ディレクトリを作っておく
+  "swapファイル出力
+  set directory=$VIM/vimbackup
+  "backupファイル出力
+  set backup
+  set backupdir=$VIM/vimbackup
+  "viminfo出力
+  set viminfo+=n$VIM/viminfo.txt
+  " undoファイル出力
+  set noundofile
+elseif s:is_mac || s:is_cygwin || s:is_unix
+  set swapfile
+  set nobackup
+  set noundofile
+endif
+
+"-----------------------------------------------------------------------
+" キーマップ
+"-----------------------------------------------------------------------
+set notimeout
+set ttimeout
+set timeoutlen=100
+
+nnoremap <SPACE><ESC> <Nop>
+nnoremap <SPACE><SPACE> <SPACE>
+nnoremap <Leader><ESC> <Nop>
+nnoremap <Leader><Leader> <Leader>
+
+nnoremap <SPACE>r :<C-u>silent!!<CR>:<C-u>redraw!<CR>
+nnoremap gft <C-w>gf
+nnoremap gfv :<C-u>vertical wincmd f<CR>
+nnoremap gfs <C-w>f
+nnoremap gfc gf
+
+" inoremap { {}<LEFT>
+" inoremap {<ESC> {<ESC>
+" inoremap {<Right> {<Right>
+" inoremap {<SPACE> {<SPACE>
+" inoremap {<BS> {<BS>
+" inoremap {<CR> {<CR>}<ESC><S-o>
+" inoremap {} {}
+" inoremap [ []<LEFT>
+" inoremap [<ESC> [<ESC>
+" inoremap [<Right> [<Right>
+" inoremap [<SPACE> [<SPACE>
+" inoremap [<BS> [<BS>
+" inoremap [] []
+" inoremap [<CR> [<CR>]<ESC><S-o>
+" inoremap ( ()<LEFT>
+" inoremap (<ESC> (<ESC>
+" inoremap (<Right> (<Right>
+" inoremap (<SPACE> (<SPACE>
+" inoremap (<BS> (<BS>
+" inoremap () ()
+" inoremap (<CR> (<CR>)<ESC><S-o>
+" inoremap " ""<LEFT>
+" inoremap "<ESC> "<ESC>
+" inoremap "<Right> "<Right>
+" inoremap "<SPACE> "<SPACE>
+" inoremap "<BS> "<BS>
+" inoremap "" ""
+" inoremap ' ''<LEFT>
+" inoremap '<ESC> '<ESC>
+" inoremap '<Right> '<Right>
+" inoremap '<SPACE> '<SPACE>
+" inoremap '<BS> '<BS>
+" inoremap '' ''
+" inoremap < <><LEFT>
+" inoremap <<ESC> <<ESC>
+" inoremap <<Right> <<Right>
+" inoremap <<SPACE> <<SPACE>
+" inoremap <<BS> <<BS>
+" inoremap <> <>
+" inoremap <= <=
+" inoremap <- <-
+" inoremap <! <!
+" inoremap ` ``<LEFT>
+" inoremap `<ESC> `<ESC>
+" inoremap `<Right> `<Right>
+" inoremap `<SPACE> `<SPACE>
+" inoremap `<BS> `<BS>
+" inoremap `` ``
+
+" " expand {} with indent
+" inoremap {<CR> {}<LEFT><CR><ESC>O
+
+" 挿入モード, コマンドラインモードでの移動
+if g:is_windows || s:is_cygwin || s:is_mac || s:is_unix
+  " 移動・削除
+  " inoremap <C-s> <Left>
+  " inoremap <C-d> <Down>
+  " inoremap <C-e> <Up>
+  " inoremap <C-f> <Right>
+  cnoremap <C-a> <Home>
+  cnoremap <C-e> <End>
+  cnoremap <C-d> <Del>
+  cnoremap <C-b> <Left>
+  cnoremap <C-f> <Right>
+  if g:is_windows
+    " 挿入モード終了時にIME状態を保存しない
+    inoremap <silent> <ESC> <ESC>
+    inoremap <silent> <C-[> <ESC>
+  endif
+endif
+
+" <tab>キーで括弧を移動
+noremap <Tab> %
+
+" 分割画面切り替え
+nnoremap <SPACE>J <c-w>j
+nnoremap <SPACE>K <c-w>k
+nnoremap <SPACE>L <c-w>l
+nnoremap <SPACE>H <c-w>h
+
+" タブ切り替え
+nnoremap <SPACE>9 :tabnext<CR>
+nnoremap <C-9> :tabnext<CR>
+nnoremap <SPACE>8 :tabNext<CR>
+nnoremap <C-8> :tabNext<CR>
+nnoremap <SPACE>( :tabfirst<CR>
+nnoremap <SPACE>) :tablast<CR>
+
+" ウィンドウ幅調整
+nnoremap <SPACE>> <c-w>>
+nnoremap <SPACE>< <c-w><
+nnoremap <SPACE>- <c-w>-
+nnoremap <SPACE>+ <c-w>+
+
+" 行送り
+noremap <SPACE>j 6j
+noremap <SPACE>k 6k
+
+" 半画面送り
+noremap <SPACE>l <c-d>
+noremap <SPACE>h <c-u>
+
+"" 1行画面スクロール
+"nnoremap <c-j> <c-e>j
+"nnoremap <c-k> <c-y>k
+
+" リターンキーで空行追加
+nnoremap <silent> <S-CR> O<ESC>0D
+"nnoremap <silent> <CR> o<ESC>0D
+nnoremap <silent> <CR> :<C-u>call append(expand('.'), '')<Cr>j
+
+" <C-c>で行列強調
+if has('gui_running') || g:colors_name == 'molokai'
+  nnoremap <SPACE>c :<C-u>setlocal cursorline! cursorcolumn!<CR>
+else
+  nnoremap <SPACE>c :<C-u>setlocal cursorline!<CR>
+endif
+
+" 連続コピー(貼り付けはvmodeで)
+vnoremap <silent> <C-p> "0p
+
+" vimrcショートカット
+nnoremap <SPACE>, :<C-u>tabedit $MYVIMRC<CR>
+if has("gui_running")
+  nnoremap <SPACE>. :<C-u>tabedit $MYGVIMRC<CR>
+else
+  nnoremap <SPACE>. <Nop>
+endif
+
+" 選択部分を検索
+vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR><CR>
+
+"カーソルを表示行で移動する。物理行移動は<C-n>,<C-p>
+noremap j gj
+noremap k gk
+noremap gj j
+noremap gk k
+noremap <Down> gj
+noremap <Up>   gk
+
+"^G で編集中のファイル情報を詳細表示
+nnoremap <C-g> 2<C-g>
+
+" invalidation F1 key for GUI mode
+noremap <F1> <nop>
+inoremap jj <ESC><ESC><ESC>
+
+" jump list<previous, next>
+noremap <Space>i <c-i>
+noremap <Space>o <c-o>
+
+" tag jump
+nnoremap <C-]> g<C-]>
+
+" システムのクリップボード
+noremap <Space>d "+d
+noremap <Space>y "+y
+noremap <Space>p "+gp
+noremap <Space>P "+gP
+
+" バッファ操作関連
+nnoremap <Space>bv :vsplit<CR><C-w><C-w>:ls<CR>:buffer
+nnoremap <Space>bs :split<CR><C-w><C-w>:ls<CR>:buffer
+nnoremap <Space>bt :ls<CR>:tabnew \| buffer
+nnoremap <Space>bd :ls<CR>:bdelete
+
+" disable q:(q/)
+noremap q: <Nop>
+noremap q/ <Nop>
+noremap <Space>: q:
+noremap <Space>/ q/
+
+" grep
+augroup vim_quickfix_window
+  autocmd!
+  autocmd QuickfixCmdPost *grep* cwindow
+augroup END
+vnoremap <Space>g "vy:<C-u>vimgrep /<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR>/j %<CR>
+vnoremap <Space>G "vy:<C-u>vimgrep /<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR>/j<Space>
+
+" disable Enter(o) in quickfix, cmdwin, help
+augroup vim_quickfix_window_keymap
+  autocmd!
+  autocmd FileType qf nnoremap <buffer> q :<C-u>ccl<CR>
+  autocmd FileType qf nnoremap <buffer> <ESC><ESC> :<C-u>ccl<CR>
+  autocmd FileType qf nnoremap <buffer> <CR> <CR>
+  autocmd CmdwinEnter * nnoremap <buffer> <CR> <CR>
+  autocmd CmdwinEnter * nnoremap <buffer> <Space>: :<C-u>q<CR>
+  autocmd CmdwinEnter * nnoremap <buffer> <Space>/ :<C-u>q<CR>
+  autocmd FileType help nnoremap <buffer> <ESC><ESC> :<C-u>q<CR>
+  autocmd FileType vim-plug nnoremap <buffer> <ESC><ESC> :<C-u>q<CR>
+  autocmd FileType rst nnoremap <buffer> <ESC><ESC> :<C-u>q<CR>
+augroup END
+
+nnoremap <silent> <C-c> :<C-u>pclose<CR>
+
+" clear highlight search
+nnoremap <silent> <C-l> :<C-u>nohlsearch<CR>:<C-u>redraw!<CR>
+
+" start omni completion
+inoremap <C-o> <C-x><C-o>
+
+" 削除でレジスタに格納しない
+noremap x "_x
+noremap X "_X
+
+" unmap (write) quit func
+noremap ZZ <nop>
+noremap ZQ <nop>
+" unmap suspend func
+noremap <C-z> <nop>
+
+"Sticky Shift
+" http://vim-jp.org/vim-users-jp/2009/08/09/Hack-54.html
+inoremap <expr> ;  <SID>sticky_func()
+cnoremap <expr> ;  <SID>sticky_func()
+snoremap <expr> ;  <SID>sticky_func()
+
+function! s:sticky_func()
+  let l:sticky_table = {
+        \'1' : '!', '2' : "\"", '3' : '#', '4' : '$', '5' : '%',
+        \'6' : '&', '7' : "'", '8' : '(', '9' : ')', '0' : '_',
+        \'-' : '=', '^' : '~', '\' : '|', '@' : '`', '[' : '{',
+        \';' : '+', ':' : '*', ']' : '}', ',' : '<', '.' : '>',
+        \'/' : '?',
+        \}
+  let l:special_table = {
+        \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
+        \}
+
+  let l:key = getchar()
+  if nr2char(l:key) =~ '\l'
+    return toupper(nr2char(l:key))
+  elseif has_key(l:sticky_table, nr2char(l:key))
+    return l:sticky_table[nr2char(l:key)]
+  elseif has_key(l:special_table, nr2char(l:key))
+    return l:special_table[nr2char(l:key)]
+  else
+    return ''
+  endif
+endfunction
+
+
+"-----------------------------------------------------------------------
+" その他設定
+"-----------------------------------------------------------------------
+"" カーソル位置の記録
+" augroup General
+"     autocmd!
+"     " 設定の保存と復元
+"     autocmd BufWinLeave * silent mkview
+"     autocmd BufWinEnter * silent loadview
+" augroup END
+augroup vim_keep_cursor_position
+  autocmd!
+  autocmd BufReadPost *
+        \ if line("'\"") > 1 && line("'\"") <= line("$") |
+        \ exe "normal! g`\"" |
+        \ endif
+augroup END
+
+" 折り畳み関連
+if has("folding")
+  set foldenable
+  " set foldmethod=indent
+  "set foldmethod=syntax
+  "set foldopen=all  " fold内に移動すれば自動で開く
+  "set foldclose=all  " fold外に移動しfoldlevelより深ければ閉じる
+  set foldlevel=3   " 折り畳みレベル
+  " set foldnestmax=3  " 最大折り畳み深度
+  set foldcolumn=2  " 左側に折り畳みガイド表示
+endif
+
+" GUI setting for unix
+if has("gui") && s:is_unix
+  try
+    set guifont=Migu\ 1M \ 14
+  catch
+    set guifont=Monospace\ 12
+  endtry
+endif
+
+" フォント設定
+if s:is_mac && has('gui_running')
+  try
+    set guifont=Migu\ 1M \ 14
+  catch
+    set guifont=DejaVu\ Sans\ Mono\ 12
+  endtry
+endif
+
+try
+  source $HOME/.vimrc.local
+catch
+endtry
+
