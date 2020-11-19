@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-FILES=( .zshrc .vim .tmux.conf .vimperatorrc .tern-project .gitconfig .gitignore .eslintrc)
+FILES=(.zshrc .vim .tmux.conf .gitconfig .gitignore)
 for i in ${FILES[@]}; do
   ln -s $HOME/dotfiles/$i $HOME/$i
 done
@@ -44,8 +44,9 @@ requirements:
   Vim: latest
   python: latest
   nodejs: latest
-    tern
 
 exec:
   vim +":PlugInstall" +:q
+
+see: https://github.com/neoclide/coc.nvim/wiki/Language-servers
 END

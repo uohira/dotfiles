@@ -1,16 +1,33 @@
 call plug#begin('~/.vim/plugged')
-  Plug 'Shougo/unite.vim'
-  Plug 'Shougo/neocomplete'
-  Plug 'Shougo/neosnippet.vim'
-  Plug 'Shougo/neosnippet-snippets'
+  " completion
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  Plug 'honza/vim-snippets'
 
+  " filter
+  Plug 'ctrlpvim/ctrlp.vim'
+  Plug 'mattn/ctrlp-matchfuzzy'
+
+  " Plug 'Shougo/neocomplete'
+  " Plug 'Shougo/neosnippet.vim'
+  " Plug 'Shougo/neosnippet-snippets'
+  " Plug 'thinca/vim-quickrun'
+  " Plug 'majutsushi/tagbar'
+  " Plug 'wesleyche/SrcExpl'
+
+  " nerdtree
   Plug 'scrooloose/nerdtree'
   Plug 'jistr/vim-nerdtree-tabs'
-  Plug 'majutsushi/tagbar'
-  Plug 'wesleyche/SrcExpl'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+
   Plug 'bling/vim-airline'
+
+  " git
+  Plug 'airblade/vim-gitgutter'
   Plug 'tpope/vim-fugitive'
-  Plug 'thinca/vim-quickrun'
+
+  " utilities
+  Plug 'dhruvasagar/vim-table-mode'
+  Plug 'junegunn/vim-easy-align'
   Plug 'AndrewRadev/linediff.vim'
   Plug 'LeafCage/yankround.vim'
   Plug 'osyo-manga/vim-over'
@@ -31,169 +48,151 @@ call plug#begin('~/.vim/plugged')
   Plug 'bronson/vim-trailing-whitespace'
   Plug 'godlygeek/csapprox'
 
-  Plug 'scrooloose/syntastic'
-
   " lang
-
+  Plug 'scrooloose/syntastic'
+  Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
   Plug 'mattn/emmet-vim', { 'for':
         \ ['html', 'eruby', 'javascript.jsx', 'scss', 'css']
         \}
   Plug 'slim-template/vim-slim', { 'for': ['slim'] }
   Plug 'elixir-lang/vim-elixir', { 'for': ['elixir'] }
   Plug 'lambdatoast/elm.vim', { 'for': ['elm'] }
-
   Plug 'leshill/vim-json', { 'for': ['json'] }
-
   Plug 'mtscout6/syntastic-local-eslint.vim', { 'for': ['javascript.jsx'] }
   Plug 'pangloss/vim-javascript', { 'for': ['javascript.jsx'] }
   Plug 'mxw/vim-jsx', { 'for': ['javascript.jsx'] }
-  Plug 'ternjs/tern_for_vim', {
-        \   'for': 'javascript.jsx'
-        \ , 'dir': '~/.vim/plugged/tern_for_vim'
-        \ , 'do': 'npm install'
-        \ }
-  Plug 'flowtype/vim-flow', {
-        \   'for': 'javascript.jsx'
-        \ , 'do': 'npm install -g flow-bin'
-        \ }
   Plug 'leafgarland/typescript-vim', { 'for': ['ts', 'tsx'] }
   Plug 'heavenshell/vim-tslint', { 'for': ['ts', 'tsx'] }
   Plug 'alessioalex/syntastic-local-tslint.vim', { 'for': ['ts', 'tsx'] }
-  Plug 'digitaltoad/vim-pug', { 'for': ['pug'] }
-
-  Plug 'fatih/vim-go', { 'for': ['go'] }
+    Plug 'fatih/vim-go', { 'for': ['go'] }
   Plug 'vim-jp/vim-go-extra', { 'for': ['go'] }
-
-  Plug 'davidhalter/jedi-vim', { 'for': ['python'] }
-
 call plug#end()
 
 
-
 "############################################ {{{
-" Unite
+" coc
 "############################################
-if (index(g:plugs_order, 'unite.vim') >= 0)
-  let g:unite_enable_start_insert = 1
-  let g:unite_enable_auto_select = 0
+if (index(g:plugs_order, 'coc.nvim') >= 0)
+  let g:coc_global_extensions = [
+    \ 'coc-json',
+    \ 'coc-sh',
+    \ 'coc-python',
+    \ 'coc-go',
+    \ 'coc-html',
+    \ 'coc-css',
+    \ 'coc-tsserver',
+    \ 'coc-clangd',
+    \ 'coc-solargraph'
+    \ ]
 
-  nnoremap <Leader>ub :<C-u>Unite buffer<CR>
-  nnoremap <Leader>uf :<C-u>Unite -buffer-name=file file<CR>
-  nnoremap <Leader>uh :<C-u>Unite file_mru<CR>
-  nnoremap <Leader>ud :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
-  nnoremap <Leader>ur :<C-u>Unite -buffer-name=register register<CR>
-  nnoremap <Leader>ug :<C-u>Unite grep:.<CR>
-  nnoremap <Leader>um :<C-u>Unite file_mru<CR>
-
-  augroup vim_unite_keymap
+  augroup MyAutoCmd
     autocmd!
-    au FileType unite nnoremap <silent><buffer><C-n> j
-    au FileType unite nnoremap <silent><buffer><C-p> k
-    au FileType unite inoremap <silent><buffer><C-n> <ESC>j
-    au FileType unite inoremap <silent><buffer><C-p> <ESC>k
-    au FileType unite nnoremap <silent><buffer><expr> v unite#do_action('vsplit')
-    au FileType unite nnoremap <silent><buffer><expr> s unite#do_action('split')
-    au FileType unite nnoremap <silent><buffer><expr> t unite#do_action('tabopen')
-    au FileType unite nnoremap <silent><buffer><ESC><ESC> :<C-u>bdelete<CR>
-    au FileType unite inoremap <silent><buffer><ESC><ESC> <ESC>:<C-u>bdelete<CR>
-    au FileType unite nnoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
-    au FileType unite inoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
   augroup END
+    autocmd MyAutoCmd FileType * call s:configure_lsp()
+    function! s:configure_lsp() abort
+      let l:coc_filetyps = [
+        \ 'dockerfile',
+        \ 'bash',
+        \ 'css',
+        \ 'scss',
+        \ 'html',
+        \ 'javascript',
+        \ 'json',
+        \ 'markdown',
+        \ 'python',
+        \ 'yaml',
+        \ ]
+      if match(l:coc_filetyps, &filetype) == -1
+        return
+      endif
+
+      " snippet
+      " Use <C-j> for jump to next placeholder, it's default of coc.nvim
+      let g:coc_snippet_next = '<c-j>'
+      " Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+      let g:coc_snippet_prev = '<c-k>'
+      " " Use <C-j> for both expand and jump (make expand higher priority.)
+      " imap <C-j> <Plug>(coc-snippets-expand-jump)
+      inoremap <silent><expr> <C-k>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+      function! s:check_back_space() abort
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~# '\s'
+      endfunction
+
+      let g:coc_snippet_next = '<TAB>'
+
+      " Remap keys
+      nmap <buffer> <C-]> <Plug>(coc-definition)
+      nmap <buffer><silent> cgy <Plug>(coc-type-definition)
+      nmap <buffer><silent> cgi <Plug>(coc-implementation)
+      nmap <buffer><silent> cgr <Plug>(coc-references)
+      nmap <buffer><leader>cR <Plug>(coc-rename)
+      " Remap for format selected region
+      vmap <buffer><leader>cf <Plug>(coc-format-selected)
+      nmap <buffer><leader>cf <Plug>(coc-format-selected)
+      " Remap for do codeAction of current line
+      nmap <buffer><leader>cac <Plug>(coc-codeaction)
+      " Diagnostic
+      nmap <buffer><leader>cgd <Plug>(coc-diagnostic-info)
+      nmap <buffer><leader>cgn <Plug>(coc-diagnostic-next)
+      nmap <buffer><leader>cgp <Plug>(coc-diagnostic-prev)
+      " Setup format selected region
+      setlocal formatexpr=CocAction('formatSelected')
+      " coc-git
+      highlight default link GitGutterAdd           NONE
+      highlight default link GitGutterChange        NONE
+      highlight default link GitGutterDelete        NONE
+      highlight default link GitGutterChangeDelete  NONE
+      " Use K to show documentation in preview window
+      nnoremap <silent> K :call <SID>show_documentation()<CR>
+      function! s:show_documentation()
+        if (index(['vim','help'], &filetype) >= 0)
+          execute 'h '.expand('<cword>')
+        else
+          call CocAction('doHover')
+        endif
+      endfunction
+
+      augroup CocNvimGroup
+        autocmd!
+        " Highlight symbol under cursor on CursorHold
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+        " Update signature help on jump placeholder
+        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+      augroup end
+
+      command! -nargs=0 Prettier :CocCommand prettier.formatFile
+    endfunction
+    " Explorer
+    nnoremap <silent> ge :CocCommand explorer<CR>
+
 endif
 "}}}
 
 
 "############################################ {{{
-" neocomplete
+" CtrlP
 "############################################
-if (index(g:plugs_order, 'neocomplete') >= 0)
-  " use neocomplete
-  let g:neocomplete#enable_at_startup = 1
-  " ignore case
-  let g:neocomplete#enable_smart_case = 1
-  " camel case completion
-  let g:neocomplete#enable_camel_case_completion  =  1
-
-  let g:neocomplete#max_list = 20
-  let g:neocomplete#sources#syntax#min_keyword_length = 3
-  let g:neocomplete#auto_completion_start_length = 0
-
-  let g:neocomplete#enable_auto_close_preview = 0
-  au InsertLeave * silent! pclose!
-
-  let g:neocomplete#max_keyword_width = 80
-
-  if !exists('g:neocomplete#delimiter_patterns')
-    let g:neocomplete#delimiter_patterns = {}
-  endif
-  let g:neocomplete#delimiter_patterns.ruby = ['::']
-  let g:neocomplete#delimiter_patterns.javascript = ['.']
-
-  if !exists('g:neocomplete#same_filetypes')
-    let g:neocomplete#same_filetypes = {}
-  endif
-  let g:neocomplete#same_filetypes.ruby = 'eruby'
-  let g:neocomplete#same_filetypes.javascript = 'javascript.jsx'
-
-
-  if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-  endif
-
-  let g:neocomplete#force_omni_input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
-  let g:neocomplete#force_omni_input_patterns.go = '[^. \t]\.\%(\h\w*\)\?'
-  let g:neocomplete#force_omni_input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
-
-  let g:neocomplete#data_directory = $HOME . '/.vim/cache/neocomplete'
-
-  call neocomplete#custom#source('look', 'min_pattern_length', 1)
-
-  " keymap
-  inoremap <expr><C-u>   neocomplete#undo_completion()
-  inoremap <expr><TAB>   pumvisible() ? "\<C-n>" : "\<TAB>"
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"
-  inoremap <expr><C-h>   pumvisible() ? neocomplete#smart_close_popup() : "\<C-h>"
-  inoremap <expr><BS>    pumvisible() ? neocomplete#smart_close_popup() : "\<BS>"
-  inoremap <expr><C-y>   pumvisible() ? neocomplete#close_popup() : "\<C-y>"
-  inoremap <expr><C-c>   pumvisible() ? neocomplete#cancel_popup() : "\<C-c>"
-  inoremap <expr><ESC>   pumvisible() ? neocomplete#cancel_popup() : "\<ESC>"
-  " inoremap <expr><C-n>   !pumvisible() ? neocomplete#start_manual_complete() : "\<C-n>"
-  inoremap <expr><Space> pumvisible() ? neocomplete#smart_close_popup() : "\<Space>"
-
-
-  " Enable heavy omni completion.
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\%(\h\w*\)\?'
-  let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-  let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-  let g:neocomplete#sources#omni#input_patterns.go = '\h\w\.\w*'
+if (index(g:plugs_order, 'ctrlp.vim') >= 0)
+  let g:ctrlp_map = '<leader>p'
+  let g:ctrlp_cmd = 'CtrlP'
+  let g:ctrlp_working_path_mode = 'ra'
+  let g:ctrlp_user_command = 'find %s -type f'
+  set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 endif
 "}}}
 
 
 "############################################ {{{
-" Neosnippet
+" ctrlp-matchfuzzy
 "############################################
-if (index(g:plugs_order, 'neosnippet.vim') >= 0)
-  let g:neosnippet#snippets_directory = []
-  let g:neosnippet#snippets_directory += ['~/.vim/plugged/neosnippet-snippets/neosnippets']
-  let g:neosnippet#snippets_directory += ['~/.vim/snippets/']
-
-  imap <C-k> <Plug>(neosnippet_expand_or_jump)
-  smap <C-k> <Plug>(neosnippet_expand_or_jump)
-  xmap <C-k> <Plug>(neosnippet_expand_target)
-
-  imap <expr><TAB> neosnippet#jumpable() ? "<Plug>(neosnippet_jump)"
-        \ : neosnippet#expandable() ? "<Plug>(neosnippet_expand)" : "\<TAB>"
-  smap <expr><TAB> neosnippet#jumpable() ? "<Plug>(neosnippet_jump)"
-        \ : neosnippet#expandable() ? "<Plug>(neosnippet_expand)" : "\<TAB>"
-
-  " For snippet_complete marker.
-  if has('conceal')
-    set conceallevel=2 concealcursor=i
-  endif
+if (index(g:plugs_order, 'ctrlp-matchfuzzy') >= 0)
+  let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 endif
 "}}}
 
@@ -203,7 +202,10 @@ endif
 "############################################
 if (index(g:plugs_order, 'nerdtree') >= 0)
   " nnoremap <silent> <Leader>n :NERDTreeFocus<CR>
-  nnoremap <silent> <Leader>N :NERDTreeFind<CR>
+  augroup vim_nerdtree_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nnoremap <Leader>N :NERDTreeFind<CR>
+  augroup End
   let g:NERDTreeMapOpenSplit = 's'
   let g:NERDTreeMapOpenVSplit = 'v'
   let NERDTreeShowHidden = 1
@@ -230,49 +232,10 @@ endif
 if (index(g:plugs_order, 'vim-nerdtree-tabs') >= 0)
   let g:nerdtree_tabs_smart_startup_focus = 1
   let g:nerdtree_tabs_synchronize_focus = 1
-  map <silent> <Leader>n <plug>NERDTreeTabsToggle<CR>
-endif
-"}}}
-
-
-"############################################ {{{
-" tagbar
-"############################################
-if (index(g:plugs_order, 'vim-plug') >= 0)
-  " Width (default 40)
-  let g:tagbar_width = 40
-  " Map for toggle
-  nnoremap <silent> <leader>T :<C-u>TagbarToggle<CR>
-endif
-"}}}
-
-
-"############################################ {{{
-" SrcExpl
-"############################################
-if (index(g:plugs_order, 'SrcExpl') >= 0)
-  " Set refresh time in ms
-  let g:SrcExpl_RefreshTime = 1000
-  " Is update tags when SrcExpl is opened
-  let g:SrcExpl_isUpdateTags = 0
-  " Tag update command
-  let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
-  " Update all tags
-  function! g:SrcExpl_UpdateAllTags()
-    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase -R .'
-    call g:SrcExpl_UpdateTags()
-    let g:SrcExpl_updateTagsCmd = 'ctags --sort=foldcase %'
-  endfunction
-  " Source Explorer Window Height
-  let g:SrcExpl_winHeight = 8
-  " Mappings
-  nnoremap [srce] <Nop>
-  nmap <Leader>s [srce]
-  nnoremap <silent> [srce]  :<C-u>SrcExplToggle<CR>
-  nnoremap <silent> [srce]u :<C-u>call g:SrcExpl_UpdateTags()<CR>
-  nnoremap <silent> [srce]a :<C-u>call g:SrcExpl_UpdateAllTags()<CR>
-  nnoremap <silent> [srce]n :<C-u>call g:SrcExpl_NextDef()<CR>
-  nnoremap <silent> [srce]p :<C-u>call g:SrcExpl_PrevDef()<CR>
+  augroup vim_nerdtree_tabs_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * map <Leader>n <plug>NERDTreeTabsToggle<CR>
+  augroup End
 endif
 "}}}
 
@@ -300,24 +263,53 @@ endif
 
 
 "############################################ {{{
-" QuickRun
+" gitgutter
 "############################################
-if (index(g:plugs_order, 'vim-quickrun') >= 0)
-  let g:quickrun_config = {
-        \   "_" : {
-        \       "hook/time/enable" : 1,
-        \       'split': 'vertical'
-        \   },
-        \}
-  let g:quickrun_config._ = {
-        \ 'runner'                          : 'vimproc',
-        \ 'runner/vimproc/updatetime'       : 60,
-        \ 'outputter'                       : 'error',
-        \ 'outputter/error/success'         : 'buffer',
-        \ 'outputter/error/error'           : 'quickfix',
-        \ 'outputter/buffer/split'          : ':rightbelow 8sp',
-        \ 'outputter/buffer/close_on_empty' : 1,
-        \ }
+if (index(g:plugs_order, 'vim-gitgutter') >= 0)
+  augroup vim_gitgutter_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>ghs <Plug>(GitGutterStageHunk)
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>ghu <Plug>(GitGutterUndoHunk)
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>ghn <Plug>(GitGutterNextHunk)
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>ghp <Plug>(GitGutterPrevHunk)
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>gg :<C-u>GitGutterToggle<CR>
+  augroup END
+  let g:gitgutter_highlight_lines = 1
+  let g:gitgutter_enabled = 0
+endif
+"}}}
+
+
+"############################################ {{{
+" fugitive
+"############################################
+if (index(g:plugs_order, 'vim-fugitive') >= 0)
+  augroup vim_fugitive_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nnoremap <buffer><Leader>gd :<C-u>Gdiffsplit<CR>
+  augroup END
+  let g:gitgutter_highlight_lines = 1
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-table-mode
+"############################################
+if (index(g:plugs_order, 'vim-table-mode') >= 0)
+  let g:table_mode_corner = '|'
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-easy-align
+"############################################
+if (index(g:plugs_order, 'vim-easy-align') >= 0)
+  augroup vim_eary_align_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * vmap <Enter> <Plug>(EasyAlign)
+  augroup END
 endif
 "}}}
 
@@ -326,14 +318,17 @@ endif
 " yankround
 "############################################
 if (index(g:plugs_order, 'yankround.vim') >= 0)
-  nmap p <Plug>(yankround-p)
-  xmap p <Plug>(yankround-p)
-  nmap P <Plug>(yankround-P)
-  nmap gp <Plug>(yankround-gp)
-  xmap gp <Plug>(yankround-gp)
-  nmap gP <Plug>(yankround-gP)
-  nmap <C-p> <Plug>(yankround-prev)
-  nmap <C-n> <Plug>(yankround-next)
+  augroup vim_yankround_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nmap p <Plug>(yankround-p)
+    autocmd VimEnter,WinEnter * xmap p <Plug>(yankround-p)
+    autocmd VimEnter,VimEnter,WinEnter * nmap P <Plug>(yankround-P)
+    autocmd VimEnter,WinEnter * nmap gp <Plug>(yankround-gp)
+    autocmd VimEnter,WinEnter * xmap gp <Plug>(yankround-gp)
+    autocmd VimEnter,WinEnter * nmap gP <Plug>(yankround-gP)
+    autocmd VimEnter,WinEnter * nmap <C-p> <Plug>(yankround-prev)
+    autocmd VimEnter,WinEnter * nmap <C-n> <Plug>(yankround-next)
+  augroup END
 endif
 "}}}
 
@@ -342,14 +337,17 @@ endif
 " vim-quickhl
 "############################################
 if (index(g:plugs_order, 'vim-quickhl') >= 0)
-  " 固定ハイライト
-  nmap <Leader>m <Plug>(quickhl-manual-this)
-  xmap <Leader>m <Plug>(quickhl-manual-this)
-  " 一括解除
-  nmap <Leader>M <Plug>(quickhl-manual-reset)
-  xmap <Leader>M <Plug>(quickhl-manual-reset)
-  " カーソル下の単語をハイライト。非固定
-  nmap <Leader>j <Plug>(quickhl-cword-toggle)
+  augroup vim_quickhl_keymap
+    autocmd!
+    " 固定ハイライト
+    autocmd VimEnter,WinEnter * nmap <Leader>m <Plug>(quickhl-manual-this)
+    autocmd VimEnter,WinEnter * xmap <Leader>m <Plug>(quickhl-manual-this)
+    " 一括解除
+    autocmd VimEnter,WinEnter * nmap <Leader>M <Plug>(quickhl-manual-reset)
+    autocmd VimEnter,WinEnter * xmap <Leader>M <Plug>(quickhl-manual-reset)
+    " カーソル下の単語をハイライト。非固定
+    autocmd VimEnter,WinEnter * nmap <Leader>j <Plug>(quickhl-cword-toggle)
+  augroup END
 endif
 "}}}
 
@@ -358,10 +356,13 @@ endif
 " vim-anzu
 "############################################
 if (index(g:plugs_order, 'vim-anzu') >= 0)
-  nmap n nzz<Plug>(anzu-update-search-status)
-  nmap N Nzz<Plug>(anzu-update-search-status)
-  nmap * <Plug>(anzu-star)
-  nmap # <Plug>(anzu-sharp)
+  augroup vim_anzu_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nmap n nzz<Plug>(anzu-update-search-status)
+    autocmd VimEnter,WinEnter * nmap N Nzz<Plug>(anzu-update-search-status)
+    autocmd VimEnter,WinEnter * nmap * <Plug>(anzu-star)
+    autocmd VimEnter,WinEnter * nmap # <Plug>(anzu-sharp)
+  augroup END
 endif
 "}}}
 
@@ -374,7 +375,7 @@ if (index(g:plugs_order, 'vim-indent-guides') >= 0)
   let g:indent_guides_start_level = 1
   let g:indent_guides_guide_size = &tabstop
   let g:indent_guides_auto_colors = 0
-  augroup vim_indent_colors
+  augroup vim_indent_guides
     autocmd!
     autocmd VimEnter,Colorscheme * :hi SpecialKey term=bold ctermfg=9
     autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#414141 ctermfg=239 ctermbg=236
@@ -399,7 +400,10 @@ endif
 " tyru/open-browser.vim
 "############################################
 if (index(g:plugs_order, 'open-browser.vim') >= 0)
-  vmap go <Plug>(openbrowser-smart-search)
+  augroup vim_open_browser_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * vmap go <Plug>(openbrowser-smart-search)
+  augroup END
 endif
 "}}}
 
@@ -408,9 +412,12 @@ endif
 " incsearch.vim
 "############################################
 if (index(g:plugs_order, 'incsearch.vim') >= 0)
-  map /  <Plug>(incsearch-forward)
-  map ?  <Plug>(incsearch-backward)
-  map g/ <Plug>(incsearch-stay)
+  augroup vim_incsearch_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * map /  <Plug>(incsearch-forward)
+    autocmd VimEnter,WinEnter * map ?  <Plug>(incsearch-backward)
+    autocmd VimEnter,WinEnter * map g/ <Plug>(incsearch-stay)
+  augroup END
 endif
 "}}}
 
@@ -419,9 +426,27 @@ endif
 " vim-smalls
 "############################################
 if (index(g:plugs_order, 'vim-smalls') >= 0)
-  nmap <Leader>f <Plug>(smalls)
-  omap <Leader>f <Plug>(smalls)
-  xmap <Leader>f <Plug>(smalls)
+  augroup vim_small_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nmap <Leader>f <Plug>(smalls)
+    autocmd VimEnter,WinEnter * omap <Leader>f <Plug>(smalls)
+    autocmd VimEnter,WinEnter * xmap <Leader>f <Plug>(smalls)
+  augroup END
+endif
+"}}}
+
+
+"############################################ {{{
+" vim-bufferline
+"############################################
+if (index(g:plugs_order, 'vim-bufferline') >= 0)
+  let g:bufferline_modified = '[+]'
+  let g:bufferline_echo = 0
+  let g:bufferline_rotate = 1
+  let g:bufferline_fixed_index = -2
+  let g:bufferline_show_bufnr = 0
+  " let g:bufferline_active_buffer_left = '['
+  " let g:bufferline_active_buffer_right = ']'
 endif
 "}}}
 
@@ -430,7 +455,10 @@ endif
 " undotree
 "############################################
 if (index(g:plugs_order, 'undotree') >= 0)
-  nmap <Leader>U :UndotreeToggle<CR>
+  augroup vim_undotree_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nmap <Leader>U :UndotreeToggle<CR>
+  augroup END
   let g:undotree_SetFocusWhenToggle = 1
   let g:undotree_WindowLayout = 'topright'
   let g:undotree_SplitWidth = 35
@@ -478,8 +506,38 @@ if (index(g:plugs_order, 'syntastic') >= 0)
   let g:syntastic_python_checkers = ['flake8']
   let g:syntastic_ruby_checkers = ['rubocop', 'mri']
 
-  nnoremap ,e :<C-u>SyntasticCheck<CR>
-  nnoremap ,E :<C-u>SyntasticToggleMode<CR>
+  augroup vim_syntastic_keymap
+    autocmd!
+    autocmd VimEnter,WinEnter * nnoremap ,e :<C-u>SyntasticCheck<CR>
+    autocmd VimEnter,WinEnter * nnoremap ,E :<C-u>SyntasticToggleMode<CR>
+  augroup END
+endif
+"}}}
+
+
+"############################################ {{{
+" jedi-vim
+"############################################
+if (index(g:plugs_order, 'jedi-vim') >= 0)
+  let g:jedi#auto_initialization = 1
+  let g:jedi#completions_enabled = 1
+  let g:jedi#auto_vim_configuration = 1
+
+  let g:jedi#completions_command = "<C-n>"
+  let g:jedi#goto_assignments_command = "<Leader>ldv"
+  let g:jedi#goto_definitions_command = "<Leader>ldf"
+  " let g:jedi#documentation_command = "<Leader>ldc"
+  let g:jedi#rename_command = "<Leader>lr"
+  let g:jedi#usages_command = "<Leader>lu"
+  let g:jedi#popup_select_first = 0
+  let g:jedi#popup_on_dot = 1
+
+  augroup vim_jedi_keymap
+    autocmd!
+    autocmd FileType python setlocal completeopt-=preview
+    " for w/ neocomplete
+    autocmd FileType python setlocal omnifunc=jedi#completions
+  augroup End
 endif
 "}}}
 
@@ -489,21 +547,6 @@ endif
 "############################################
 if (index(g:plugs_order, 'emmet-vim') >= 0)
   let g:user_emmet_leader_key = '<c-y>'
-endif
-"}}}
-
-
-"############################################ {{{
-" vim-bufferline
-"############################################
-if (index(g:plugs_order, 'vim-bufferline') >= 0)
-  let g:bufferline_modified = '[+]'
-  let g:bufferline_echo = 0
-  let g:bufferline_rotate = 1
-  let g:bufferline_fixed_index = -2
-  let g:bufferline_show_bufnr = 0
-  " let g:bufferline_active_buffer_left = '['
-  " let g:bufferline_active_buffer_right = ']'
 endif
 "}}}
 
@@ -581,35 +624,5 @@ if (index(g:plugs_order, 'vim-go') >= 0)
   let g:go_fmt_command = "gofmt"
 
   let g:go_fmt_fail_silently = 1
-endif
-"}}}
-
-
-"############################################ {{{
-" jedi-vim
-"############################################
-if (index(g:plugs_order, 'jedi-vim') >= 0)
-  let g:jedi#auto_initialization = 1
-  let g:jedi#completions_enabled = 1
-  let g:jedi#auto_vim_configuration = 1
-
-  let g:jedi#completions_command = "<C-n>"
-  let g:jedi#goto_assignments_command = "<Leader>ldv"
-  let g:jedi#goto_definitions_command = "<Leader>ldf"
-  " let g:jedi#documentation_command = "<Leader>ldc"
-  let g:jedi#rename_command = "<Leader>lr"
-  let g:jedi#usages_command = "<Leader>lu"
-  let g:jedi#popup_select_first = 0
-  let g:jedi#popup_on_dot = 1
-
-  augroup vim_jedi_keymap
-    autocmd!
-    autocmd FileType python setlocal completeopt-=preview
-    " for w/ neocomplete
-    autocmd FileType python setlocal omnifunc=jedi#completions
-  augroup End
-
-  let g:neocomplete#force_omni_input_patterns.python =
-        \'\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 endif
 "}}}

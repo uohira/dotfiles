@@ -1,21 +1,24 @@
 if [[ -f $HOME/.antigen/antigen.zsh ]]; then
   source $HOME/.antigen/antigen.zsh
-  antigen use oh-my-zsh
   antigen bundle zsh-users/zsh-completions src
-  antigen bundle autojump
   antigen bundle greymd/docker-zsh-completion
   antigen bundle b4b4r07/enhancd
   antigen bundle zsh-users/zaw
   antigen bundle sroze/docker-compose-zsh-plugin
-  antigen bundle gusaiani/elixir-oh-my-zsh
   antigen bundle mollifier/anyframe
   antigen apply
 
   # anyframe
   bindkey '^gb' anyframe-widget-checkout-git-branch
-  bindkey '^gh' anyframe-widget-execute-history
+  bindkey '^g^b' anyframe-widget-checkout-git-branch
+  bindkey '^gh' anyframe-widget-put-history
+  bindkey '^g^h' anyframe-widget-put-history
   bindkey '^gk' anyframe-widget-kill
+  bindkey '^g^k' anyframe-widget-kill
   bindkey '^ge' anyframe-widget-insert-git-branch
+  bindkey '^g^e' anyframe-widget-insert-git-branch
+  bindkey '^gf' anyframe-widget-insert-filename
+  bindkey '^g^f' anyframe-widget-insert-filename
 fi
 
 
@@ -100,16 +103,15 @@ bindkey "^N" history-beginning-search-forward-end
 #履歴のインクリメンタル検索でワイルドカード利用可能
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
-#ヒストリーサイズ設定
+# ヒストリーサイズ設定
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
-PATH=${PATH}:~/bin
 
-#ヒストリの一覧を読みやすい形に変更
+# ヒストリの一覧を読みやすい形に変更
 HISTTIMEFORMAT="[%Y/%M/%D %H:%M:%S] "
 
-#補完リストが多いときに尋ねない
+# 補完リストが多いときに尋ねない
 LISTMAX=1000
 
 # 同時に起動したzshの間でヒストリを共有する
@@ -131,6 +133,8 @@ WORDCHARS="*?_-.[]~&;!#$%^(){}<>|"
 setopt correct
 
 EDITOR="vim"
+
+PATH=${PATH}:~/bin
 
 # 環境ごとの設定
 if [ -e $HOME/.zshrc.local ]; then
