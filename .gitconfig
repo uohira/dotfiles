@@ -53,3 +53,5 @@
 	prompt = false
 [mergetool]
 	prompt = false
+[init]
+	defaultBranch = main
